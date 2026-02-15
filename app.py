@@ -79,4 +79,90 @@ st.markdown("### Professional Dashboard with 15 Graphs + Insights 🚀")
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric("🏙️ City", city)
-col2.metric("📊 Avg AQI", round(filtere
+
+col2.metric(
+    "📊 Avg AQI",
+    round(filtered["aqi"].mean(), 2)
+)
+
+col3.metric(
+    "🔥 Max AQI",
+    int(filtered["aqi"].max())
+)
+
+col4.metric(
+    "🌱 Min AQI",
+    int(filtered["aqi"].min())
+)
+
+# =====================================
+# INSIGHTS SECTION
+# =====================================
+st.subheader("🧠 Key Insights")
+
+best_day = filtered.loc[filtered["aqi"].idxmin()]
+worst_day = filtered.loc[filtered["aqi"].idxmax()]
+
+st.info(
+    f"""
+✅ Best Air Quality Day: {best_day['date'].date()} 🌱 (AQI: {best_day['aqi']})  
+❌ Worst Air Quality Day: {worst_day['date'].date()} 🔥 (AQI: {worst_day['aqi']})  
+📌 Most Common Category: {filtered['aqi_category'].mode()[0]}
+"""
+)
+
+# =====================================
+# DOWNLOAD BUTTON
+# =====================================
+st.download_button(
+    label="📥 Download Filtered Data",
+    data=filtered.to_csv(index=False),
+    file_name=f"{city}_AQI_Data.csv",
+    mime="text/csv"
+)
+
+# =====================================
+# GRAPH SECTION
+# =====================================
+st.subheader("📊 15 Interactive Graphs")
+
+# -------- Graph 1 AQI Trend --------
+fig1 = px.line(
+    filtered, x="date", y="aqi",
+    title="1️⃣ AQI Trend Over Time 📈",
+    markers=True
+)
+st.plotly_chart(fig1, use_container_width=True)
+
+# -------- Graph 2 PM2.5 --------
+fig2 = px.area(
+    filtered, x="date", y="pm25",
+    title="2️⃣ PM2.5 Pollution 🌫️"
+)
+st.plotly_chart(fig2, use_container_width=True)
+
+# -------- Graph 3 PM10 --------
+fig3 = px.line(
+    filtered, x="date", y="pm10",
+    title="3️⃣ PM10 Levels 🚗"
+)
+st.plotly_chart(fig3, use_container_width=True)
+
+# -------- Graph 4 NO2 --------
+fig4 = px.bar(
+    filtered, x="date", y="no2",
+    title="4️⃣ NO2 Concentration 🏭",
+    color="no2"
+)
+st.plotly_chart(fig4, use_container_width=True)
+
+# -------- Graph 5 SO2 --------
+fig5 = px.scatter(
+    filtered, x="date", y="so2",
+    title="5️⃣ SO2 Scatter 🌋",
+    size="so2",
+    color="so2"
+)
+st.plotly_chart(fig5, use_container_width=True)
+
+# ----
